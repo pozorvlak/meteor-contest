@@ -179,10 +179,9 @@ sub solve {
         my $fp_cands = $fp_i_cands->[$p];
         for my $fpa (@{$fp_cands}) {
 
-            $nb = scalar keys %{$free};
             $nc = scalar grep { exists $free->{$_} } @{$fpa};
 
-            next if @{$fpa} != $nc and (@{$fpa} != $nc || $nb != $nc);
+            next if @{$fpa} != $nc and (@{$fpa} != $nc || keys(%{$free}) != $nc);
 
             for my $ci (@{$fpa}) {
                 $curr_board[$ci] = $p;
