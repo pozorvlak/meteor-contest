@@ -112,7 +112,7 @@ sub get_senh {
             }
         }
 
-        push @se_nh2, \%f;
+        push @se_nh2, [ keys %f ];
     }
 
     return @se_nh2;
@@ -197,7 +197,7 @@ sub solve {
                 }
 
                 my $se_neighborhood_has_free = 0;
-                for ( keys %{ $south_east_neighborhoods[$n_i_min] } ) {
+                for ( @{ $south_east_neighborhoods[$n_i_min] } ) {
                     if ( $n_free[$_] ) {
                         $se_neighborhood_has_free = 1;
                         last;
