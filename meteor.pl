@@ -14,7 +14,7 @@ my ($W, $NW, $NE) = (-$E, -$SE, -$SW);
 my %rd = ($E => $NE, $NE => $NW, $NW => $W, $W => $SW, $SW => $SE, $SE => $E);
 my %fd = ($E => $E, $NE => $SE, $NW => $SW, $W => $W, $SW => $NW, $SE => $NE);
 
-my ($na, $nb, $nc);
+my $nc;
 my ($board, $cti, $pieces) = get_puzzle();
 my @fps = get_footprints($board, $cti, $pieces);
 my @se_nh = get_senh($board, $cti);
