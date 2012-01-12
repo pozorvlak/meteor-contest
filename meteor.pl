@@ -190,11 +190,10 @@ sub solve {
                 my %n_free = %{$free};
                 delete @n_free{ @{$fpa} };
 
-                my $n_i_min      = min( keys %n_free );
-                my $neighborhood = $south_east_neighborhoods[$n_i_min];
+                my $n_i_min = min( keys %n_free );
 
                 my $se_neighborhood_has_free = 0;
-                for ( keys %{$neighborhood} ) {
+                for ( keys %{ $south_east_neighborhoods[$n_i_min] } ) {
                     if ( exists $n_free{$_} ) {
                         $se_neighborhood_has_free = 1;
                         last;
