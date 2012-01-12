@@ -173,48 +173,54 @@ sub print_board {
 sub solve {
     my ( $i_min, $free, $pieces_left ) = @_;
 
+    my @attempts;
+
     my $fp_i_cands = $fps[$i_min];
+    for my $p ( reverse @{$pieces_left} ) {
+        unshift @attempts, map [ $i_min, $free, $pieces_left, $p, $_ ], @{ $fp_i_cands->[$p] };
+    }
 
-    for my $p ( @{$pieces_left} ) {
-        FOOTPRINT:
-        for my $fpa ( @{$fp_i_cands->[$p]} ) {
+  ATTEMPT:
+    while ( @attempts ) {
+        my ( $i_min, $free, $pieces_left, $p, $fpa ) = @{ shift @attempts };
 
-            for ( @{$fpa} ) {
-                next FOOTPRINT if !exists $free->{$_};
-            }
-
-            @curr_board[@{$fpa}] = ($p) x @{$fpa};
-
-            if ( @{$pieces_left} > 1 ) {
-                my %n_free = %{$free};
-                delete @n_free{ @{$fpa} };
-
-                my $n_i_min = min( keys %n_free );
-
-                my $se_neighborhood_has_free = 0;
-                for ( keys %{ $south_east_neighborhoods[$n_i_min] } ) {
-                    if ( exists $n_free{$_} ) {
-                        $se_neighborhood_has_free = 1;
-                        last;
-                    }
-                }
-                next if !$se_neighborhood_has_free;
-
-                my @n_pieces_left = grep { $_ != $p } @{$pieces_left};
-
-                solve( $n_i_min, \%n_free, \@n_pieces_left );
-            }
-            else {
-                my $s = join( '', @curr_board );
-                push @solutions, $s;
-                my $rs = reverse $s;
-                push @solutions, $rs;
-
-                return if @solutions >= $needed;
-            }
+        for ( @{$fpa} ) {
+            next ATTEMPT if !exists $free->{$_};
         }
 
-        return if @solutions >= $needed;
+        @curr_board[ @{$fpa} ] = ( $p ) x @{$fpa};
+
+        if ( @{$pieces_left} > 1 ) {
+            my %n_free = %{$free};
+            delete @n_free{ @{$fpa} };
+
+            my $n_i_min = min( keys %n_free );
+
+            my $se_neighborhood_has_free = 0;
+            for ( keys %{ $south_east_neighborhoods[$n_i_min] } ) {
+                if ( exists $n_free{$_} ) {
+                    $se_neighborhood_has_free = 1;
+                    last;
+                }
+            }
+            next if !$se_neighborhood_has_free;
+
+            my @n_pieces_left = grep { $_ != $p } @{$pieces_left};
+
+            my $fp_i_cands = $fps[$n_i_min];
+            for my $p ( reverse @n_pieces_left ) {
+                unshift @attempts, map [ $n_i_min, \%n_free, \@n_pieces_left, $p, $_ ], @{ $fp_i_cands->[$p] };
+            }
+        }
+        else {
+            my $s = join( '', @curr_board );
+            push @solutions, $s;
+            my $rs = reverse $s;
+            push @solutions, $rs;
+
+            return if @solutions >= $needed;
+        }
+
     }
 
     return;
