@@ -177,16 +177,20 @@ sub solve {
 
     my $fp_i_cands = $fps[$i_min];
     for my $p ( reverse @{$pieces_left} ) {
+        my @fpas;
+      OUTERFPA:
+        for my $fpa ( @{ $fp_i_cands->[$p] } ) {
+            for ( @{$fpa} ) {
+                next OUTERFPA if !exists $free{$_};
+            }
+            push @fpas, $fpa;
+        }
         unshift @attempts, map [ $i_min, $free, $pieces_left, $p, $_ ], @{ $fp_i_cands->[$p] };
     }
 
   ATTEMPT:
     while ( @attempts ) {
         my ( $i_min, $free, $pieces_left, $p, $fpa ) = @{ shift @attempts };
-
-        for ( @{$fpa} ) {
-            next ATTEMPT if !exists $free->{$_};
-        }
 
         @curr_board[ @{$fpa} ] = ( $p ) x @{$fpa};
 
@@ -209,7 +213,15 @@ sub solve {
 
             my $fp_i_cands = $fps[$n_i_min];
             for my $p ( reverse @n_pieces_left ) {
-                unshift @attempts, map [ $n_i_min, \%n_free, \@n_pieces_left, $p, $_ ], @{ $fp_i_cands->[$p] };
+                my @fpas;
+              FPA:
+                for my $fpa ( @{ $fp_i_cands->[$p] } ) {
+                    for ( @{$fpa} ) {
+                        next FPA if !exists $n_free{$_};
+                    }
+                    push @fpas, $fpa;
+                }
+                unshift @attempts, map [ $n_i_min, \%n_free, \@n_pieces_left, $p, $_ ], @fpas;
             }
         }
         else {
