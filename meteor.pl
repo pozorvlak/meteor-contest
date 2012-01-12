@@ -191,9 +191,10 @@ sub solve {
 
                 my $n_i_min;
                 for ( 0 .. $#n_free ) {
-                    next if !$n_free[$_];
-                    $n_i_min = $_;
-                    last;
+                    if ( $n_free[$_] ) {
+                        $n_i_min = $_;
+                        last;
+                    }
                 }
 
                 my $se_neighborhood_has_free = 0;
