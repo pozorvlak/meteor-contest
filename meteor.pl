@@ -187,10 +187,8 @@ sub solve {
             $curr_board[$_] = $p for @{$fpa};
 
             if ( @{$pieces_left} > 1 ) {
-
-                my %fp = map { $_ => undef } @{$fpa};
-                my %n_free;
-                @n_free{ grep { !exists $fp{$_} } keys %{$free} } = ();
+                my %n_free = %{$free};
+                delete $n_free{$_} for @{$fpa};
 
                 my $n_i_min = min( keys %n_free );
                 next if ( grep { exists $se_nh[$n_i_min]->{$_} } keys %n_free ) <= 0;
