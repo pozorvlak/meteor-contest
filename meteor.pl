@@ -183,38 +183,38 @@ sub solve {
             $nb = scalar keys %{$free};
             $nc = scalar grep { exists $free->{$_} } @{$fpa};
 
-            if (($na == $nc) || ($na == $nc && $nb == $nc)) {
-                for my $ci (@{$fpa}) {
-                    $curr_board[$ci] = $p;
-                }
+            next if $na != $nc and ($na != $nc || $nb != $nc);
 
-                if (scalar @{$pieces_left} > 1) {
+            for my $ci (@{$fpa}) {
+                $curr_board[$ci] = $p;
+            }
 
-                    my %fp = map { $_ => undef } @{$fpa};
-                    my %n_free;
-                    @n_free{ grep { !exists $fp{$_} } keys %{$free} } = ();
+            if (scalar @{$pieces_left} > 1) {
 
-                    my $n_i_min = min(keys %n_free);
-                    if ((scalar grep { exists $se_nh[$n_i_min]->{$_} } keys %n_free) > 0) {
-                        my @n_pieces_left = @{$pieces_left};
-                        for (my $x = 0; $x < scalar @n_pieces_left; $x++) {
-                            if ($n_pieces_left[$x] == $p) {
-                                splice(@n_pieces_left, $x, 1);
-                                last;
-                            }
+                my %fp = map { $_ => undef } @{$fpa};
+                my %n_free;
+                @n_free{ grep { !exists $fp{$_} } keys %{$free} } = ();
+
+                my $n_i_min = min(keys %n_free);
+                if ((scalar grep { exists $se_nh[$n_i_min]->{$_} } keys %n_free) > 0) {
+                    my @n_pieces_left = @{$pieces_left};
+                    for (my $x = 0; $x < scalar @n_pieces_left; $x++) {
+                        if ($n_pieces_left[$x] == $p) {
+                            splice(@n_pieces_left, $x, 1);
+                            last;
                         }
-
-                        solve($n_i_min, \%n_free, \@n_pieces_left);
                     }
-                } else {
-                    my $s = join('', @curr_board);
-                    push @solutions, $s;
-                    my $rs = reverse $s;
-                    push @solutions, $rs;
 
-                    if (scalar @solutions >= $needed) {
-                        return;
-                    }
+                    solve($n_i_min, \%n_free, \@n_pieces_left);
+                }
+            } else {
+                my $s = join('', @curr_board);
+                push @solutions, $s;
+                my $rs = reverse $s;
+                push @solutions, $rs;
+
+                if (scalar @solutions >= $needed) {
+                    return;
                 }
             }
         }
