@@ -184,7 +184,7 @@ sub solve {
                 next FOOTPRINT if !exists $free->{$_};
             }
 
-            $curr_board[$_] = $p for @{$fpa};
+            @curr_board[@{$fpa}] = ($p) x @{$fpa};
 
             if ( @{$pieces_left} > 1 ) {
                 my %n_free = %{$free};
