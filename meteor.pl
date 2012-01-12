@@ -188,7 +188,7 @@ sub solve {
 
             if ( @{$pieces_left} > 1 ) {
                 my %n_free = %{$free};
-                delete $n_free{$_} for @{$fpa};
+                delete @n_free{ @{$fpa} };
 
                 my $n_i_min      = min( keys %n_free );
                 my $neighborhood = $south_east_neighborhoods[$n_i_min];
