@@ -19,9 +19,9 @@ my ($board, $cti, $pieces) = get_puzzle();
 my @fps = get_footprints($board, $cti, $pieces);
 my @se_nh = get_senh($board, $cti);
 
-my %free = map { $_ => undef } 0 .. scalar @{$board} - 1;
-my @curr_board = (-1) x scalar @{$board};
-my @pieces_left = 0 .. scalar @{$pieces} - 1;
+my %free = map { $_ => undef } 0 .. @{$board} - 1;
+my @curr_board = (-1) x @{$board};
+my @pieces_left = 0 .. @{$pieces} - 1;
 my @solutions = ();
 my $needed = $ARGV[0];
 
@@ -76,14 +76,14 @@ sub get_footprints {
     my ($bd, $ct, $ps) = @_;
 
     my @fp;
-    foreach my $p (0 .. scalar @{$ps} - 1) {
-        foreach my $ci (0 .. scalar @{$bd} - 1) {
+    foreach my $p (0 .. @{$ps} - 1) {
+        foreach my $ci (0 .. @{$bd} - 1) {
             $fp[$ci]->[$p] = [];
         }
     }
 
     for my $c (@{$bd}) {
-        for (my $pi = 0; $pi < scalar @{$ps}; $pi++) {
+        for (my $pi = 0; $pi < @{$ps}; $pi++) {
             for my $pp (@{$ps->[$pi]}) {
                 my %f = ();
                 for my $o (@{$pp}) {
@@ -92,7 +92,7 @@ sub get_footprints {
                     }
                 }
 
-                if (scalar keys %f == 5) {
+                if (keys %f == 5) {
                     push @{$fp[min(keys %f)]->[$pi]}, [keys %f];
                 }
             }
@@ -130,7 +130,7 @@ sub get_puzzle {
     }
 
     my %ct;
-    for my $i (0 .. scalar @bd - 1) {
+    for my $i (0 .. @bd - 1) {
         $ct{$bd[$i]} = $i;
     }
 
@@ -179,7 +179,7 @@ sub solve {
         my $fp_cands = $fp_i_cands->[$p];
         for my $fpa (@{$fp_cands}) {
 
-            $nc = scalar grep { exists $free->{$_} } @{$fpa};
+            $nc = grep { exists $free->{$_} } @{$fpa};
 
             next if @{$fpa} != $nc and (@{$fpa} != $nc || keys(%{$free}) != $nc);
 
@@ -187,16 +187,16 @@ sub solve {
                 $curr_board[$ci] = $p;
             }
 
-            if (scalar @{$pieces_left} > 1) {
+            if (@{$pieces_left} > 1) {
 
                 my %fp = map { $_ => undef } @{$fpa};
                 my %n_free;
                 @n_free{ grep { !exists $fp{$_} } keys %{$free} } = ();
 
                 my $n_i_min = min(keys %n_free);
-                if ((scalar grep { exists $se_nh[$n_i_min]->{$_} } keys %n_free) > 0) {
+                if ((grep { exists $se_nh[$n_i_min]->{$_} } keys %n_free) > 0) {
                     my @n_pieces_left = @{$pieces_left};
-                    for (my $x = 0; $x < scalar @n_pieces_left; $x++) {
+                    for (my $x = 0; $x < @n_pieces_left; $x++) {
                         if ($n_pieces_left[$x] == $p) {
                             splice(@n_pieces_left, $x, 1);
                             last;
@@ -211,13 +211,13 @@ sub solve {
                 my $rs = reverse $s;
                 push @solutions, $rs;
 
-                if (scalar @solutions >= $needed) {
+                if (@solutions >= $needed) {
                     return;
                 }
             }
         }
 
-        if (scalar @solutions >= $needed) {
+        if (@solutions >= $needed) {
             return;
         }
     }
