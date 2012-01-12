@@ -49,7 +49,7 @@ sub permute {
 
         if ( @{$ido} ~~ @{$r_ido} ) {
             my $end = min( scalar @ps, int( $dir_no / 2 ) );
-            @ps = @ps[ 0 .. $end - 1 ];
+            splice @ps, $end;
         }
     }
 
