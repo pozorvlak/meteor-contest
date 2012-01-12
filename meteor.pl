@@ -196,7 +196,7 @@ sub solve {
                 next if ( grep { exists $se_nh[$n_i_min]->{$_} } keys %n_free ) <= 0;
 
                 my @n_pieces_left = @{$pieces_left};
-                for ( my $x = 0 ; $x < @n_pieces_left ; $x++ ) {
+                for my $x ( 0 .. @n_pieces_left ) {
                     next if $n_pieces_left[$x] != $p;
                     splice( @n_pieces_left, $x, 1 );
                     last;
