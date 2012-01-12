@@ -16,7 +16,7 @@ my %fd = ( $E => $E,  $NE => $SE, $NW => $SW, $W => $W,  $SW => $NW, $SE => $NE 
 
 my ( $board, $cti, $pieces ) = get_puzzle();
 my @fps = get_footprints( $board, $cti, $pieces );
-my @se_nh = get_senh( $board, $cti );
+my @south_east_neighborhoods = get_senh( $board, $cti );
 
 my %free        = map { $_ => undef } 0 .. @{$board} - 1;
 my @curr_board  = ( -1 ) x @{$board};
@@ -191,16 +191,16 @@ sub solve {
                 delete $n_free{$_} for @{$fpa};
 
                 my $n_i_min      = min( keys %n_free );
-                my $intermediary = $se_nh[$n_i_min];
+                my $neighborhood = $south_east_neighborhoods[$n_i_min];
 
-                my $any_free_is_in_intermediary = 0;
+                my $se_neighborhood_has_free = 0;
                 for ( keys %n_free ) {
-                    if ( exists $intermediary->{$_} ) {
-                        $any_free_is_in_intermediary = 1;
+                    if ( exists $neighborhood->{$_} ) {
+                        $se_neighborhood_has_free = 1;
                         last;
                     }
                 }
-                next if !$any_free_is_in_intermediary;
+                next if !$se_neighborhood_has_free;
 
                 my @n_pieces_left = grep { $_ != $p } @{$pieces_left};
 
