@@ -176,9 +176,8 @@ sub solve {
     my $fp_i_cands = $fps[$i_min];
 
     for my $p ( @{$pieces_left} ) {
-        my $fp_cands = $fp_i_cands->[$p];
         FOOTPRINT:
-        for my $fpa ( @{$fp_cands} ) {
+        for my $fpa ( @{$fp_i_cands->[$p]} ) {
 
             for ( @{$fpa} ) {
                 next FOOTPRINT if !exists $free->{$_};
