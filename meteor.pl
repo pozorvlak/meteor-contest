@@ -202,12 +202,7 @@ sub solve {
                 }
                 next if !$any_free_is_in_intermediary;
 
-                my @n_pieces_left = @{$pieces_left};
-                for my $x ( 0 .. @n_pieces_left ) {
-                    next if $n_pieces_left[$x] != $p;
-                    splice( @n_pieces_left, $x, 1 );
-                    last;
-                }
+                my @n_pieces_left = grep { $_ != $p } @{$pieces_left};
 
                 solve( $n_i_min, \%n_free, \@n_pieces_left );
             }
