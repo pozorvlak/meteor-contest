@@ -194,8 +194,8 @@ sub solve {
                 my $neighborhood = $south_east_neighborhoods[$n_i_min];
 
                 my $se_neighborhood_has_free = 0;
-                for ( keys %n_free ) {
-                    if ( exists $neighborhood->{$_} ) {
+                for ( keys %{$neighborhood} ) {
+                    if ( exists $n_free{$_} ) {
                         $se_neighborhood_has_free = 1;
                         last;
                     }
