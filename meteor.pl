@@ -182,7 +182,7 @@ sub solve {
 
             $nc = grep { exists $free->{$_} } @{$fpa};
 
-            next if @{$fpa} != $nc and ( @{$fpa} != $nc || keys( %{$free} ) != $nc );
+            next if @{$fpa} != $nc;
 
             $curr_board[$_] = $p for @{$fpa};
 
