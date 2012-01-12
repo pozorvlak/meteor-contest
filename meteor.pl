@@ -192,7 +192,15 @@ sub solve {
 
                 my $n_i_min      = min( keys %n_free );
                 my $intermediary = $se_nh[$n_i_min];
-                next if ( grep { exists $intermediary->{$_} } keys %n_free ) <= 0;
+
+                my $any_free_is_in_intermediary = 0;
+                for ( keys %n_free ) {
+                    if ( exists $intermediary->{$_} ) {
+                        $any_free_is_in_intermediary = 1;
+                        last;
+                    }
+                }
+                next if !$any_free_is_in_intermediary;
 
                 my @n_pieces_left = @{$pieces_left};
                 for my $x ( 0 .. @n_pieces_left ) {
