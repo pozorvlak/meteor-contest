@@ -103,16 +103,16 @@ sub get_footprints {
 sub get_senh {
     my ( $bd, $ct ) = @_;
 
-    my @se_nh2 = ();
+    my @se_nh2;
     for my $c ( @{$bd} ) {
-        my %f = ();
+        my %f;
         for my $o ( $E, $SW, $SE ) {
             if ( exists $ct->{ $c + $o } ) {
                 $f{ $ct->{ $c + $o } }++;
             }
         }
 
-        push @se_nh2, \%f;
+        push @se_nh2, [ keys %f ];
     }
 
     return @se_nh2;
@@ -206,7 +206,7 @@ sub solve {
             }
 
             my $se_neighborhood_has_free = 0;
-            for ( keys %{ $south_east_neighborhoods[$n_i_min] } ) {
+            for ( @{ $south_east_neighborhoods[$n_i_min] } ) {
                 if ( $n_free[$_] ) {
                     $se_neighborhood_has_free = 1;
                     last;
