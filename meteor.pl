@@ -18,13 +18,13 @@ my ( $board, $cti, $pieces ) = get_puzzle();
 my @fps = get_footprints( $board, $cti, $pieces );
 my @south_east_neighborhoods = get_senh( $board, $cti );
 
-my %free        = map { $_ => undef } 0 .. @{$board} - 1;
+my @free        = ( 1 ) x @{$board};
 my @curr_board  = ( -1 ) x @{$board};
 my @pieces_left = 0 .. @{$pieces} - 1;
 my @solutions   = ();
 my $needed      = $ARGV[0];
 
-solve( 0, \%free, \@pieces_left );
+solve( 0, \@free, \@pieces_left );
 @solutions = sort @solutions;
 
 say scalar @solutions, ' solutions found';
@@ -181,7 +181,7 @@ sub solve {
       OUTERFPA:
         for my $fpa ( @{ $fp_i_cands->[$p] } ) {
             for ( @{$fpa} ) {
-                next OUTERFPA if !exists $free{$_};
+                next OUTERFPA if !$free[$_];
             }
             push @fpas, $fpa;
         }
@@ -195,14 +195,19 @@ sub solve {
         @curr_board[ @{$fpa} ] = ( $p ) x @{$fpa};
 
         if ( @{$pieces_left} > 1 ) {
-            my %n_free = %{$free};
-            delete @n_free{ @{$fpa} };
+            my @n_free = @{$free};
+            @n_free[ @{$fpa} ] = ();
 
-            my $n_i_min = min( keys %n_free );
+            my $n_i_min;
+            for ( 0 .. $#n_free ) {
+                next if !$n_free[$_];
+                $n_i_min = $_;
+                last;
+            }
 
             my $se_neighborhood_has_free = 0;
             for ( keys %{ $south_east_neighborhoods[$n_i_min] } ) {
-                if ( exists $n_free{$_} ) {
+                if ( $n_free[$_] ) {
                     $se_neighborhood_has_free = 1;
                     last;
                 }
@@ -217,11 +222,11 @@ sub solve {
               FPA:
                 for my $fpa ( @{ $fp_i_cands->[$p] } ) {
                     for ( @{$fpa} ) {
-                        next FPA if !exists $n_free{$_};
+                        next FPA if !$n_free[$_];
                     }
                     push @fpas, $fpa;
                 }
-                unshift @attempts, map [ $n_i_min, \%n_free, \@n_pieces_left, $p, $_ ], @fpas;
+                unshift @attempts, map [ $n_i_min, \@n_free, \@n_pieces_left, $p, $_ ], @fpas;
             }
         }
         else {
