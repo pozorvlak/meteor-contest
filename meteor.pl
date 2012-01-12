@@ -190,8 +190,9 @@ sub solve {
                 my %n_free = %{$free};
                 delete $n_free{$_} for @{$fpa};
 
-                my $n_i_min = min( keys %n_free );
-                next if ( grep { exists $se_nh[$n_i_min]->{$_} } keys %n_free ) <= 0;
+                my $n_i_min      = min( keys %n_free );
+                my $intermediary = $se_nh[$n_i_min];
+                next if ( grep { exists $intermediary->{$_} } keys %n_free ) <= 0;
 
                 my @n_pieces_left = @{$pieces_left};
                 for my $x ( 0 .. @n_pieces_left ) {
